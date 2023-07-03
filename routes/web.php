@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // View User
+
 Route::get('/', [MainController::class, 'index']);
 Route::get('/home', [MainController::class, 'index']);
 Route::get('/shop', [MainController::class, 'shop']);
@@ -28,8 +31,16 @@ Route::post('/shop/product={id}/feedback', [MainController::class, 'feedback']);
 Route::get('sale', [MainController::class, 'sale']);
 
 //auth
-Route::get('/auth/login', [MainController::class, 'login'])->name('auth.login');
-Route::get('/auth/register', [MainController::class, 'register'])->name('auth.register');
-Route::post('/auth/save', [MainController::class, 'saveRegister'])->name('auth.saveRegister');
-Route::get('/', [MainController::class, 'logout'])->name('auth.logout');
-Route::post('/', [MainController::class, 'checkLogin'])->name('auth.checkLogin');
+Route::get('/auth/login', [AuthController::class, 'login'])->name('auth.login');
+Route::post('/home', [AuthController::class, 'checkLogin'])->name('auth.checkLogin');
+Route::get('/auth/register', [AuthController::class, 'register'])->name('auth.register');
+Route::post('/auth/save', [AuthController::class, 'saveRegister'])->name('auth.saveRegister');
+Route::get('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+
+// cart
+Route::group(['middleware' => 'web'], function () {
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart/update', [CartController::class, 'update']);
+    Route::get('/cart/delete/id={id}', [CartController::class, 'destroy']);
+    Route::get('/shop/product={id}/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
+});

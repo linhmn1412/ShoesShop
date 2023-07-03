@@ -8,20 +8,20 @@
         <div class="row">
             <div class="col-md-7 ">
                 <ul class="breadcrumb my-0 py-3">
-                    <li class="breadcrumb-item"><a href="/" style="color: #185137;">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/home" style="color: #185137;">Home</a></li>
                     <li class="breadcrumb-item"><a href="/shop" style="color: #185137;">Shop</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ $shoe['name_shoe']  }}</li>
                 </ul>
             </div>
-            {{--@foreach ($gio_hangs as $id => $giohang)
-                @if ($giohang['ten_giay'] == $giay['ten_giay'])
+            @foreach ($cart as $id => $cart_item)
+                @if ($cart_item['id_shoe'] == $shoe['id_shoe'])
                     <div class="col-md-5">
                         <div class="alert alert-success" role="alert">
-                            <i class="fas fa-check-circle"></i>&ensp;Sản phẩm này đã được thêm vào giỏ hàng của bạn!
+                            <i class="fas fa-check-circle"></i>&ensp;This product has been added to your cart!
                         </div>
                     </div>
                 @endif
-            @endforeach--}}
+            @endforeach
         </div>
 
     </nav>
@@ -44,14 +44,9 @@
                                 $(function() {
                                     $("#avgRated").rateYo({
                                         starWidth: "20px",
-                                        ratedFill: "#16B5EA",
-                                        rating: {
-                                            {
-                                                $countFB['rated']
-                                            }
-                                        },
+                                        rating: {{$countFB['avgRated']}},
                                         readOnly: true,
-                                    });
+                                    })
                                 });
                             </script>
 
@@ -88,7 +83,8 @@
                             <small class="text-muted"></small>
                         </p>
                         <div class="d-grid gap-2 mb-3">
-                            <a href="shop/product={{$shoe['id_shoe']}}/addToCart" class="btn btn-primary fs-6 d-flex justify-content-between align-items-center" type="button" data-url="" style="background-color: #185137;">
+                            <a href="/shop/product={{$shoe['id_shoe']}}/addToCart" class="btn btn-primary fs-6 d-flex justify-content-between align-items-center" type="button" 
+                            data-url="{{ route('addToCart', ['id' => $shoe['id_shoe']]) }}" style="background-color: #185137;">
                                 <span>Add To Cart</span>
                                 <i class="fas fa-arrow-right-long"></i>
                             </a>
@@ -221,7 +217,7 @@
                         <center>{{ $feedbacks->links() }}</center>
                     </div>
                 </div>
-                @if ($check == 0)
+                @if ($check == 1)
                 <div class="col-md">
                     <br>
                     <h5 class="float-start">Review Product</h5>
@@ -262,7 +258,7 @@
                 @endif
 
 
-                @if ($check == 1)
+                @if ($check == 0)
                 <div class="col-md">
                     <p class="text-dark bg-success p-2 text-dark bg-opacity-25">Buy to rate it!</p>
                     <br>

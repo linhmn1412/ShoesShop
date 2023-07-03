@@ -22,13 +22,13 @@
                         <div class="row justify-content-center">
 
                             <div class="col-4 order-2 order-lg-2">
-                                <p class="text-center h1 fw-bold mb-3 mx-1 mx-md-4 mt-4">LOGIN</p>
+                                <p class="text-center text-success h1 fw-bold mb-3 mx-1 mx-md-4 mt-4">LOGIN</p>
                                 <form method="POST" action="{{ route('auth.checkLogin') }}">
-                                @csrf
+                                    @csrf
                                     <br>
                                     @if (Session::get('Fail'))
                                         <p class="text-danger">{{ Session::get('Fail') }}</p>
-                                @endif
+                                    @endif
                                     <!-- Email input -->
                                     <div class="form-outline mb-4">
                                         <input type="text" id="form2Example1" class="form-control" name="username" value="{{ old('username') }}" />
@@ -46,7 +46,7 @@
                                         <div class="col d-flex justify-content-center">
                                             <!-- Checkbox -->
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="form2Example34" checked />
+                                                <input class="form-check-input" type="checkbox" value="" id="form2Example34" />
                                                 <label class="form-check-label" for="form2Example34"> Remember me </label>
                                             </div>
                                         </div>
@@ -58,7 +58,7 @@
                                     </div>
 
                                     <!-- Submit button -->
-                                    <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+                                    <button type="submit" class="btn btn-success btn-block mb-4">Sign in</button>
 
                                     <!-- Register buttons -->
                                     <div class="text-center">

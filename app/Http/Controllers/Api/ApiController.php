@@ -7,10 +7,12 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Discount;
 use App\Models\Shoe;
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as RoutingController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ApiController extends RoutingController
 {
@@ -21,8 +23,8 @@ class ApiController extends RoutingController
      */
     public function index()
     {
-        // $data = Shoe::all();
-        // return response()->json($data);
+        $data = Shoe::all();
+        return response()->json($data);
     }
 
     /**
@@ -33,7 +35,19 @@ class ApiController extends RoutingController
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'username' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+        ]);
+        return User::create([
+                    'fullname' => $request->input('fullname'),
+                    'email' => $request->input('email'),
+                    'phone_number' => $request->input('phone_number'),
+                    'username' => $request->input('username'),
+                    'password' => Hash::make($request->input('password')),
+                    'id_role' => '2',
+                ]);
     }
 
     /**

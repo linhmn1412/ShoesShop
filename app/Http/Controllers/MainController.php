@@ -13,12 +13,17 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class MainController extends Controller
 {
 
     public function index()
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -82,7 +87,7 @@ class MainController extends Controller
             ->where('brands.name_brand', $brand)->paginate(9);
 
         return view('index')->with('route', 'shop')
-        ->with('data',$data)
+            ->with('data', $data)
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('discounts', $discounts)
@@ -99,7 +104,7 @@ class MainController extends Controller
         $shoes = DB::table('shoes')->whereBetween(DB::raw('CAST(price AS UNSIGNED)'), [(int)$p1, (int)$p2])->paginate(9);
 
         return view('index')->with('route', 'shop')
-        ->with('data',$data)
+            ->with('data', $data)
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('discounts', $discounts)
@@ -115,7 +120,7 @@ class MainController extends Controller
         $shoes = DB::table('shoes')->orderBy('created_at', 'desc')->paginate(9);
 
         return view('index')->with('route', 'shop')
-        ->with('data',$data)
+            ->with('data', $data)
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('shoes', $shoes)
@@ -132,7 +137,7 @@ class MainController extends Controller
 
         return view('index')->with('route', 'shop')
             ->with('brands', $brands)
-            ->with('data',$data)
+            ->with('data', $data)
             ->with('categories', $categories)
             ->with('shoes', $shoes)
             ->with('discounts', $discounts);
@@ -164,6 +169,9 @@ class MainController extends Controller
             $similarShoes = Shoe::where('id_brand', $shoe->id_brand)->where('id_category', $shoe->id_category)
                 ->where('id_shoe', '!=', $shoe->id_shoe)->get();
         }
+        //product
+        $cart = session()->get(key:'cart');
+        if(!$cart){$cart = array();}
 
         return view('index')->with('route', 'product')
             ->with('data', $data)
@@ -173,17 +181,17 @@ class MainController extends Controller
             ->with('discounts', $discounts)
             ->with('feedbacks', $feedbacks)
             ->with('countFB', $countFB)
+            ->with('cart', $cart)
             ->with('similarShoes', $similarShoes);
     }
 
     //user feedback
     public function feedback($id, Request $request)
     {
-        $data = User::where('id_user', session('Login'))->first();
         $check = 0;
         $feedbacks = Feedback::all();
-        foreach($feedbacks as $feedback) {
-            if(($feedback['id_user'] == $request->input('id_user')) && ($feedback['id_shoe'] == $id)){
+        foreach ($feedbacks as $feedback) {
+            if (($feedback['id_user'] == $request->input('id_user')) && ($feedback['id_shoe'] == $id)) {
                 $check = 1;
             } else {
                 $check = 0;
@@ -193,26 +201,25 @@ class MainController extends Controller
         if ($check == 1) {
 
 
-            $tmp= DB::table('feedback')->where('id_shoe', $id)->first();
+            $feedback = DB::table('feedback')->where('id_shoe', $id)->first();
             //update
-            $fb = Feedback::find($tmp->id_feedback);
+            $fb = Feedback::find($feedback->id_feedback);
             $fb['username'] = $request->input('username');
             $fb['rated'] = $request->input('rated');
             $fb['comment'] = $request->input('comment');
             $fb->save();
-            
         } else {
             Feedback::create([
-            'id_shoe' => $id,
-            'id_user' => $request->input('id_user'),
-            'username' => $request->input('user_name'),
-            'rated' => $request->input('rated'),
-            'comment' => $request->input('comment'),
-            
+                'id_shoe' => $id,
+                'id_user' => $request->input('id_user'),
+                'username' => $request->input('user_name'),
+                'rated' => $request->input('rated'),
+                'comment' => $request->input('comment'),
+
             ]);
         }
-        
-        return Redirect('/shop/product='.$id);
+
+        return Redirect('/shop/product=' . $id);
     }
 
     public function sale()
@@ -233,144 +240,11 @@ class MainController extends Controller
 
         return view('index')->with('route', 'sale')
             ->with('brands', $brands)
-            ->with('data',$data)
+            ->with('data', $data)
             ->with('categories', $categories)
             ->with('shoes10', $shoes10)
             ->with('shoes20', $shoes20)
             ->with('shoes30', $shoes30)
             ->with('discounts', $discounts);
-    }
-
-
-    public function login()
-    {
-        return view('auth.login');
-    }
-
-    public function register()
-    {
-        return view('auth.register');
-    }
-
-    public function checkLogin(Request $request)
-    {
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required | min:5',
-        ]);
-
-        $loginEmail = User::where('email', $request->username)->first();
-        $loginUsername = User::where('username', $request->username)->first();
-
-        if (!$loginEmail) {
-
-            if (!$loginUsername) {
-                return back()->with('Fail', '* Email or Username does not exist!');
-            } else {
-                if (Hash::check($request->password, $loginUsername->password)) {
-                    $request->session()->put('Login', $loginUsername->id_user);
-
-                    $data = User::where('id_user', session('Login'))->first();
-                    $brands = Brand::all();
-                    $categories = Category::all();
-                    $shoes = Shoe::all();
-                    $users = User::all();
-                    $roles = Role::all();
-                    $discounts = Discount::all();
-                    $bestsellers = DB::table('shoes')->orderBy('quantity_sold', 'desc')->get();
-                    $newshoes = DB::table('shoes')->orderBy('created_at', 'desc')->get();
-
-                    if ($loginUsername->id_role == '1') {
-                        
-                    } else {
-                        session()->put('check', '2');
-                        return view('index')->with('data', User::where('id_user', session('Login'))->first())->with('route', 'home')
-                        ->with('brands', $brands)
-                        ->with('categories', $categories)
-                        ->with('shoes', $shoes)
-                        ->with('users', $users)
-                        ->with('discounts', $discounts)
-                        ->with('roles', $roles)
-                        ->with('newshoes', $newshoes)
-                        ->with('bestsellers', $bestsellers);
-                    }
-                } else {
-                    session()->put('check', '0');
-                    return back()->with('Fail', '* Wrong password');
-                }
-            }
-        } else {
-            if (Hash::check($request->password, $loginEmail->password)) {
-                $request->session()->put('Login', $loginEmail->id_user);
-
-                $data = User::where('id_user', session('Login'))->first();
-                $brands = Brand::all();
-                $categories = Category::all();
-                $shoes = Shoe::all();
-                $users = User::all();
-                $roles = Role::all();
-                $discounts = Discount::all();
-                $bestsellers = DB::table('shoes')->orderBy('quantity_sold', 'desc')->get();
-                $newshoes = DB::table('shoes')->orderBy('created_at', 'desc')->get();
-
-                if ($loginEmail->id_role == '1') {
-
-                } else {
-
-                    session()->put('check', '2');
-                    return view('index')->with('data', User::where('id_user', session('Login'))->first())->with('route', 'home')
-                    ->with('brands', $brands)
-                    ->with('categories', $categories)
-                    ->with('shoes', $shoes)
-                    ->with('users', $users)
-                    ->with('discounts', $discounts)
-                    ->with('roles', $roles)
-                    ->with('newshoes', $newshoes)
-                    ->with('bestsellers', $bestsellers);
-                }
-            } else {
-                session()->put('check', '0');
-                return back()->with('Fail', '* Wrong password');
-            }
-        }
-    }
-
-    function logout()
-    {
-        if (session()->has('Login')) {
-            session()->pull('Login');
-            session()->put('check', '0');
-            return redirect('/');
-        }
-        session()->put('check', '0');
-        return redirect('/');
-    }
-
-    // Register;
-    public function saveRegister(Request $request){
-        $request->validate([
-            'fullname' => 'required',
-            'email' => 'required | email | unique:users',
-            'phone_number' => 'required',
-            'username' => 'required | unique:users',
-            'password' => 'required | min:5 | confirmed',
-            'id_role' => 'required',
-        ],[
-            'email.unique' => '* Email already exists.',
-            'username.unique' => '* Username already exists.',
-            'password.min' => '* Password must contain at least 5 characters.',
-            'password.confirmed' => '* The confirmation password entered is incorrect.',
-        ]);
-
-        User::create([
-            'fullname' => $request->input('fullname'),
-            'email' => $request->input('email'),
-            'phone_number' => $request->input('phone_number'),
-            'username' => $request->input('username'),
-            'password' => Hash::make($request->input('password')),
-            'id_role' => '2',
-        ]);
-
-        return redirect()->route('auth.login');
-    }
+    } 
 }

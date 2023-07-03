@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-2 fixed-top">
     <div class="container">
-        <a class="navbar-brand me-2" href="/"><img src="{{ URL('images/logo.png') }}" height="45" width="100" alt="SHOES SHOP" loading="lazy"></a>
+        <a class="navbar-brand me-2" href="/home"><img src="{{ URL('images/logo.png') }}" height="45" width="100" alt="SHOES SHOP" loading="lazy"></a>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown no-arrow">
                 <form action="/search" method="POST" class="form-inline mr-auto w-100 navbar-search">
@@ -20,10 +20,10 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
 
             <div class="d-flex align-items-center float-right">
-                <a href="/" class=""><button type="button" class="btn btn-link px-3 me-2" style="color: #185137;">Home</button></a>
+                <a href="/home" class=""><button type="button" class="btn btn-link px-3 me-2" style="color: #185137;">Home</button></a>
                 <a href="/shop"><button type="button" class="btn btn-link px-3 me-2 " style="color: #185137;">Shop</button></a>
                 <a href="/sale"><button type="button" class="btn btn-link px-3 me-2" style="color: #185137;">Sale</button></a>
-                <a href="/"><button type="button" class="btn btn-link px-3 me-2 " style="color: #185137;">About Us</button></a>
+                <a href="/about-us"><button type="button" class="btn btn-link px-3 me-2 " style="color: #185137;">About Us</button></a>
                 <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="/cart" title="My Cart" data-mdb-toggle="tooltip" data-mdb-placement="bottom">
                     <i class="fas fa-shopping-cart text-secondary"></i>
                     <span class="badge rounded-pill badge-notification" style="background-color: #185137;" id="productCartCount">0</span>
@@ -37,8 +37,8 @@
                     <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="navbarDropdownMenuLink">
                     <form method="POST" action="">
                             @csrf
-                            <li><a class="dropdown-item" href="/tai-khoan" style="color: #185137;">Account</a></li>
-                            <li><a class="dropdown-item" href="/auth/logout" style="color: #185137;">Sign Out</a></li>
+                            <li><a class="dropdown-item" href="/account" style="color: #185137;">Account</a></li>
+                            <li><a class="dropdown-item" href="{{ route('auth.logout')}}" style="color: #185137;">Sign Out</a></li>
                             @if (session()->get(key: 'check') == 1)
                             <li><a class="dropdown-item" href="/admin">Admin Page</a></li>
                             @endif

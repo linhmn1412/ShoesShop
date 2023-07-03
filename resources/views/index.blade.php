@@ -3,6 +3,7 @@
 @section('content')
 
     @switch($route)
+
         @case('home')
             @include('app.home.carousel')
             @include('app.home.bannerCategory')
