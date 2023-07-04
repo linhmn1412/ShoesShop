@@ -24,11 +24,13 @@
             @break
 
         @case('cart')
-            @inclue('app.cart.cart')
+            @include('app.cart.cart')
             @break
 
         @default
-            @include('app.home.body')
+            @include('app.home.carousel')
+            @include('app.home.bannerCategory')
+            @include('app.home.listProducts')
             
     @endswitch
     

@@ -14,55 +14,55 @@ class CartController extends Controller
 {
     public function index()
     {
-        dd(session()->get(key:'cart'));
-        $data = User::where('id_user',session('Login'))->first();
-        $brands = Brand::all();
-        $categories = Category::all();
+        $data = User::where('id_user', session('Login'))->first();
         $shoes = Shoe::all();
         $discounts = Discount::all();
 
-        $cart = session()->get(key:'cart');
-        if(!$cart){
+        if (session()->get(key: 'cart') == null) {
             $cart = array();
+            session()->put('cart', $cart);
+        }else {
+            $cart = session()->get(key: 'cart');
         }
-        
+        $lenCart = count($cart);
+
         return view('index')->with('route', 'cart')
+            ->with('lenCart', $lenCart)
             ->with('data', $data)
-            ->with('brands', $brands)
-            ->with('categories', $categories)
             ->with('shoes', $shoes)
             ->with('discounts', $discounts)
-            -> with('cart', $cart)
-        ;
+            ->with('cart', $cart);
     }
 
-    public function addToCart($id) {
+    public function addToCart($id)
+    {
         $discounts = Discount::all();
         $shoe = Shoe::find($id);
-        $cart = session()->get(key:'cart');
+        $cart = session()->get(key: 'cart');
 
-        if(isset($cart[$id])){
+        if (isset($cart[$id])) {
             $cart[$id]['quantity'] += 1;
         } else {
 
             $cart[$id] = [
                 'id_shoe' => $id,
                 'name_shoe' => $shoe['name_shoe'],
-                'image_1' => $shoe['image_1'],        
+                'image_1' => $shoe['image_1'],
                 'price' => $shoe['price'],
                 'quantity' => 1,
             ];
 
-            foreach($discounts as $discount){
-                if($discount['id_discount'] == $shoe['id_discount']){
+            foreach ($discounts as $discount) {
+                if ($discount['id_discount'] == $shoe['id_discount']) {
                     $cart[$id]['discount_value'] = $discount['discount_value'];
                 }
             }
-        }        
-        
+        }
+
         session()->put('cart', $cart);
-        
-        return Redirect('/shop/product='.$id);
+        toastr()->success('Success','This product has been added to your cart!',['timeOut' => 2000]);
+
+        return Redirect('/shop/product=' . $id);
     }
 
     /**
@@ -85,7 +85,7 @@ class CartController extends Controller
     {
         //
 
-        
+
     }
 
     /**
@@ -119,15 +119,11 @@ class CartController extends Controller
      */
     public function update(Request $request)
     {
-        //
-        $shoe = shoe::find($request->id);
-        $cart = session()->get(key:'cart');
-
-        
+        $cart = session()->get(key: 'cart');
         $cart[$request->id]['quantity'] =  $request->quantity;
-        
+
         session()->put('cart', $cart);
-        // return session()->get(key:'gio_hang');
+        toastr()->success('Success','This product has been updated!',['timeOut' => 2000]);
         return Redirect('/cart');
     }
 
@@ -140,11 +136,11 @@ class CartController extends Controller
     public function destroy($id)
     {
         //
-        $cart = session()->get(key:'cart');
+        $cart = session()->get(key: 'cart');
 
         unset($cart[$id]);
         session()->put('cart', $cart);
+        toastr()->warning('Success','This product has been remove!',['timeOut' => 2000]);
         return Redirect('/cart');
-
     }
 }

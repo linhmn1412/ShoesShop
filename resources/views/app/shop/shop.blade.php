@@ -7,7 +7,6 @@
             <h3 class="card-title" style="color: #185137;">SHOP</h3>
         </center>
     </div>
-    <br>
 </div>
 
 <div class="container">

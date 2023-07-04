@@ -26,7 +26,7 @@
                 <a href="/about-us"><button type="button" class="btn btn-link px-3 me-2 " style="color: #185137;">About Us</button></a>
                 <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="/cart" title="My Cart" data-mdb-toggle="tooltip" data-mdb-placement="bottom">
                     <i class="fas fa-shopping-cart text-secondary"></i>
-                    <span class="badge rounded-pill badge-notification" style="background-color: #185137;" id="productCartCount">0</span>
+                    <span class="badge rounded-pill badge-notification" style="background-color: #185137;" id="productCartCount">{{$lenCart}}</span>
                 </a>
 
                 @if (Session::get('Login'))

@@ -24,7 +24,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'username' => 'required',
-            'password' => 'required | min:5',
+            'password' => 'required | min:6',
         ]);
 
         $loginEmail = User::where('email', $request->username)->first();
@@ -38,6 +38,11 @@ class AuthController extends Controller
                 if (Hash::check($request->password, $loginUsername->password)) {
                     $request->session()->put('Login', $loginUsername->id_user);
 
+                    if(session()->get(key:'cart') == null){
+                        $cart = array();
+                        session()->put('cart', $cart);
+                    }
+                    $lenCart = count((session()->get(key:'cart')));
                     $data = User::where('id_user', session('Login'))->first();
                     $brands = Brand::all();
                     $categories = Category::all();
@@ -48,11 +53,13 @@ class AuthController extends Controller
                     $bestsellers = DB::table('shoes')->orderBy('quantity_sold', 'desc')->get();
                     $newshoes = DB::table('shoes')->orderBy('created_at', 'desc')->get();
 
-                    if ($loginUsername->id_role == '1') {
+                    if ($loginUsername->id_role == 1) {
+                        session()->put('check', 1);
                     } else {
-                        session()->put('check', '2');
+                        session()->put('check', 2);
                         return view('index')->with('data', User::where('id_user', session('Login'))->first())->with('route', 'home')
                             ->with('brands', $brands)
+                            ->with('lenCart',$lenCart)
                             ->with('categories', $categories)
                             ->with('shoes', $shoes)
                             ->with('users', $users)
@@ -62,7 +69,7 @@ class AuthController extends Controller
                             ->with('bestsellers', $bestsellers);
                     }
                 } else {
-                    session()->put('check', '0');
+                    session()->put('check', 0);
                     return back()->with('Fail', '* Wrong password');
                 }
             }
@@ -70,6 +77,11 @@ class AuthController extends Controller
             if (Hash::check($request->password, $loginEmail->password)) {
                 $request->session()->put('Login', $loginEmail->id_user);
 
+                if(session()->get(key:'cart') == null){
+                    $cart = array();
+                    session()->put('cart', $cart);
+                }
+                $lenCart = count((session()->get(key:'cart')));
                 $data = User::where('id_user', session('Login'))->first();
                 $brands = Brand::all();
                 $categories = Category::all();
@@ -80,11 +92,13 @@ class AuthController extends Controller
                 $bestsellers = DB::table('shoes')->orderBy('quantity_sold', 'desc')->get();
                 $newshoes = DB::table('shoes')->orderBy('created_at', 'desc')->get();
 
-                if ($loginEmail->id_role == '1') {
+                if ($loginEmail->id_role == 1) {
+                    session()->put('check', 1);
                 } else {
 
-                    session()->put('check', '2');
+                    session()->put('check', 2);
                     return view('index')->with('data', $data)->with('route', 'home')
+                        ->with('lenCart', $lenCart)
                         ->with('brands', $brands)
                         ->with('categories', $categories)
                         ->with('shoes', $shoes)
@@ -95,7 +109,7 @@ class AuthController extends Controller
                         ->with('bestsellers', $bestsellers);
                 }
             } else {
-                session()->put('check', '0');
+                session()->put('check', 0);
                 return back()->with('Fail', '* Wrong password');
             }
         }
@@ -105,10 +119,10 @@ class AuthController extends Controller
     {
         if (session()->has('Login')) {
             session()->pull('Login');
-            session()->put('check', '0');
+            session()->put('check', 0);
             return redirect('/home');
         }
-        session()->put('check', '0');
+        session()->put('check', 0);
         return redirect('/home');
     }
 
@@ -122,13 +136,14 @@ class AuthController extends Controller
         $request->validate([
             'fullname' => 'required',
             'email' => 'required | email | unique:users',
-            'phone_number' => 'required',
+            'phone_number' => ['required', 'numeric', 'digits:10'],
             'username' => 'required | unique:users',
             'password' => 'required | min:6 | confirmed',
             'id_role' => 'required',
         ], [
             'email.unique' => '* Email already exists.',
             'username.unique' => '* Username already exists.',
+            'phone_number.digits'=> '* Phone number must be 10 digits.',
             'password.min' => '* Password must contain at least 6 characters.',
             'password.confirmed' => '* The confirmation password entered is incorrect.',
         ]);
@@ -139,8 +154,9 @@ class AuthController extends Controller
             'phone_number' => $request->input('phone_number'),
             'username' => $request->input('username'),
             'password' => Hash::make($request->input('password')),
-            'id_role' => '2'
+            'id_role' => $request->input('id_role')
         ]);
-        return redirect()->back()->with('Success', 'Account successfully created.');
+        toastr()->success('Success','Registered account!',['timeOut' => 2000]);
+        return redirect()->route('auth.login');
     }
 }

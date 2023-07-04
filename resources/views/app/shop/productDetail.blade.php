@@ -13,15 +13,6 @@
                     <li class="breadcrumb-item active" aria-current="page">{{ $shoe['name_shoe']  }}</li>
                 </ul>
             </div>
-            @foreach ($cart as $id => $cart_item)
-                @if ($cart_item['id_shoe'] == $shoe['id_shoe'])
-                    <div class="col-md-5">
-                        <div class="alert alert-success" role="alert">
-                            <i class="fas fa-check-circle"></i>&ensp;This product has been added to your cart!
-                        </div>
-                    </div>
-                @endif
-            @endforeach
         </div>
 
     </nav>

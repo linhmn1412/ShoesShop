@@ -80,6 +80,7 @@
                                         {{ $message }}
                                         @enderror
                                     </p>
+                                    <input type="hidden" class="form-control" name="id_role" value=2 />
 
                                     <div class="d-flex justify-content-center mx mt-3 mb-lg-4">
                                         <button type="submit" class="btn btn-success btn-lg btn-block">Sign Up</button>

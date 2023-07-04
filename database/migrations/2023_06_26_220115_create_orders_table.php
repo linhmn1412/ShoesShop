@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('note')->nullable();
             $table->string('total')->nullable();
             $table->string('payment');
-            $table->longText('detail_order');
+            //$table->longText('detail_order');
             $table->string('status');
             $table->timestamps();
         });

@@ -38,6 +38,7 @@ class ApiController extends RoutingController
         $request->validate([
             'username' => 'required',
             'email' => 'required|email|unique:users',
+            'phone_number' => ['required', 'numeric', 'digits:10'],
             'password' => 'required|min:6',
         ]);
         return User::create([

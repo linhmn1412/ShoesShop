@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,9 +39,13 @@ Route::post('/auth/save', [AuthController::class, 'saveRegister'])->name('auth.s
 Route::get('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 // cart
-Route::group(['middleware' => 'web'], function () {
-    Route::get('/cart', [CartController::class, 'index']);
-    Route::post('/cart/update', [CartController::class, 'update']);
-    Route::get('/cart/delete/id={id}', [CartController::class, 'destroy']);
-    Route::get('/shop/product={id}/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
-});
+Route::get('/shop/product={id}/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
+Route::get('/cart', [CartController::class, 'index']);
+Route::post('/cart/update', [CartController::class, 'update']);
+Route::get('/cart/delete/id={id}', [CartController::class, 'destroy']);
+
+//payment
+Route::post('/cart/checkout', [OrderController::class, 'checkout']);
+Route::get('/checkout', [OrderController::class, 'index']);
+Route::post('/checkout/bill', [OrderController::class, 'store']);
+

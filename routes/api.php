@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Api\ApiOrderController;
 use App\Models\Shoe;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -36,3 +37,5 @@ Route::get('/api-shop/brand={brand}', function($brand) {
 });
 
 Route::post('/api-user/create', [ApiController:: class, 'store']);
+
+Route::post('/api-order/create', [ApiOrderController:: class, 'store']);

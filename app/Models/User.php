@@ -17,11 +17,12 @@ class User extends Authenticatable
     protected $primaryKey = "id_user";
 
     public $timestamps = false;
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'id_user', 'id_user');
+    }
+
     protected $fillable = [
         'fullname', 
         'email', 

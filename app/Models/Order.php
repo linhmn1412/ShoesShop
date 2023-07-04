@@ -14,14 +14,23 @@ class Order extends Model
 
     public $timestamps = true;
 
+    public function orderdetail()
+    {
+        return $this->hasMany(OrderDetail::class, 'id_order','id_order');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user','id_user');
+    }
+
     protected $fillable = [
+        'id_user',
         'name_buyer',
         'phone_number', 
         'address', 
         'note', 
         'total', 
         'payment', 
-        'detail_order',
         'status'
     ];
 }

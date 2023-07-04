@@ -24,6 +24,8 @@ class MainController extends Controller
             $cart = array();
             session()->put('cart', $cart);
         }
+        $lenCart = count((session()->get(key:'cart')));
+        
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -33,6 +35,7 @@ class MainController extends Controller
         $newshoes = DB::table('shoes')->orderBy('created_at', 'desc')->get();
 
         return view('index')->with('route', 'home')
+            ->with('lenCart',$lenCart)
             ->with('data', $data)
             ->with('brands', $brands)
             ->with('categories', $categories)
@@ -45,6 +48,11 @@ class MainController extends Controller
 
     public function shop()
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -52,6 +60,7 @@ class MainController extends Controller
         $shoes = Shoe::paginate(9);
 
         return view('index')->with('route', 'shop')
+            ->with('lenCart', $lenCart)
             ->with('data', $data)
             ->with('brands', $brands)
             ->with('categories', $categories)
@@ -61,6 +70,11 @@ class MainController extends Controller
 
     public function findCategory($category)
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -69,6 +83,7 @@ class MainController extends Controller
         $shoes = DB::table('shoes')->join('categories', 'shoes.id_category', 'categories.id_category')
             ->where('categories.name_category', $category)->paginate(9);
         return view('index')->with('route', 'shop')
+        ->with('lenCart', $lenCart)
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('data', $data)
@@ -78,6 +93,11 @@ class MainController extends Controller
 
     public function findBrand($brand)
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -88,6 +108,7 @@ class MainController extends Controller
 
         return view('index')->with('route', 'shop')
             ->with('data', $data)
+            ->with('lenCart', $lenCart)
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('discounts', $discounts)
@@ -96,6 +117,11 @@ class MainController extends Controller
 
     public function findPrice($p1, $p2)
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -106,6 +132,7 @@ class MainController extends Controller
         return view('index')->with('route', 'shop')
             ->with('data', $data)
             ->with('brands', $brands)
+            ->with('lenCart', $lenCart)
             ->with('categories', $categories)
             ->with('discounts', $discounts)
             ->with('shoes', $shoes);;
@@ -113,6 +140,11 @@ class MainController extends Controller
 
     public function newArrivals()
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -121,6 +153,7 @@ class MainController extends Controller
 
         return view('index')->with('route', 'shop')
             ->with('data', $data)
+            ->with('lenCart', $lenCart)
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('shoes', $shoes)
@@ -129,6 +162,11 @@ class MainController extends Controller
 
     public function bestSellers()
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -138,6 +176,7 @@ class MainController extends Controller
         return view('index')->with('route', 'shop')
             ->with('brands', $brands)
             ->with('data', $data)
+            ->with('lenCart', $lenCart)
             ->with('categories', $categories)
             ->with('shoes', $shoes)
             ->with('discounts', $discounts);
@@ -145,6 +184,11 @@ class MainController extends Controller
 
     public function productDetail($id)
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -178,6 +222,7 @@ class MainController extends Controller
             ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('shoe', $shoe)
+            ->with('lenCart', $lenCart)
             ->with('discounts', $discounts)
             ->with('feedbacks', $feedbacks)
             ->with('countFB', $countFB)
@@ -224,6 +269,11 @@ class MainController extends Controller
 
     public function sale()
     {
+        if(session()->get(key:'cart') == null){
+            $cart = array();
+            session()->put('cart', $cart);
+        }
+        $lenCart = count((session()->get(key:'cart')));
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -243,6 +293,7 @@ class MainController extends Controller
             ->with('data', $data)
             ->with('categories', $categories)
             ->with('shoes10', $shoes10)
+            ->with('lenCart', $lenCart)
             ->with('shoes20', $shoes20)
             ->with('shoes30', $shoes30)
             ->with('discounts', $discounts);
