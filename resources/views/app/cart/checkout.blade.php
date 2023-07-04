@@ -75,7 +75,7 @@
         <div class="row">
             <div class="col-7">
                 <div class="card mb-3">
-                    <form id="formOrder" action="/checkout/bill" method="POST">
+                    <form id="formOrder" action="/checkout/order" method="POST">
                         @csrf
                         <div class="card-header">
                             <h5 class="card-title" style="margin-top: 10px; color: #185137;">DELIVERY INFORMATION:</h5>
@@ -117,7 +117,7 @@
                             </div>
                             <input type="hidden" class="form-control" name="id_user" value="{{ $data->id_user }}" />
                             <input type="hidden" class="form-control" name="total" value="{{ $total }}" />
-                            <input type="hidden" class="form-control" name="status" value="unconfirmed" />
+                            <input type="hidden" class="form-control" name="status" value="Pending" />
                         </div>
                     </form>
                 </div>
@@ -166,7 +166,7 @@
                         </div>
 
                         <div>
-                        <button type="submit" class="btn btn-block text-white" style="background-color: #185137;" form= "formOrder">Order Now</button>
+                        <button type="submit" class="btn btn-block text-white" style="background-color: #185137;" form="formOrder">Order Now</button>
                         </div>
 
                     </div>

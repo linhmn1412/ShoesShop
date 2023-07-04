@@ -88,15 +88,23 @@ class ApiController extends RoutingController
     public function findCategory($category)
     {
         
-        // return DB::table('shoes')->join('categories', 'shoes.id_category','=','categories.id_category')
-        //                             ->where('categories.name_category','=',$category)->get();
+        return DB::table('shoes')->join('categories', 'shoes.id_category','=','categories.id_category')
+                                    ->where('categories.name_category','=',$category)->get();
     }
 
     public function findBrand($brand)
     {
-        // return DB::table('shoes')->join('brands', 'shoes.id_brand','=','brands.id_brand')
-        //                         ->where('brands.name_brand','=',$brand)->get();
+        return DB::table('shoes')->join('brands', 'shoes.id_brand','=','brands.id_brand')
+                                ->where('brands.name_brand','=',$brand)->get();
     }
 
+    public function allProducts_user($id){
+        return DB::table('orders')
+        ->join('orderdetail', 'orders.id_order', '=', 'orderdetail.id_order')
+        ->join('shoes', 'orderdetail.id_shoe', '=', 'shoes.id_shoe')
+        ->where('orders.id_user', $id)
+        ->select('shoes.*')
+        ->get();
+    }
    
-        }
+}

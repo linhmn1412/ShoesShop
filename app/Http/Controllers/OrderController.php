@@ -79,14 +79,7 @@ class OrderController extends Controller
         $checkout = session()->get(key:'checkout');
         $cart = session()->get(key:'cart');
         session()->forget('cart');
-
-        $request->validate([
-            'name_buyer' => 'required',
-            'phone_number' => ['required', 'numeric', 'digits:10'],
-            'address' => 'required',
-        ], [
-            'phone_number.digits'=> '* Phone number must be 10 digits.',
-        ]);
+        
 
         $order = Order::create([
             'id_user'=> $request->input('id_user'),
@@ -120,7 +113,7 @@ class OrderController extends Controller
         session()->put('cart', $cart);
         toastr()->success('Success','Order created successfully!',['timeOut' => 2000]);
 
-        return redirect('/cart');
+        return redirect('/');
     }
 
     /**

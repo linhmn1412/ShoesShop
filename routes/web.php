@@ -47,5 +47,5 @@ Route::get('/cart/delete/id={id}', [CartController::class, 'destroy']);
 //payment
 Route::post('/cart/checkout', [OrderController::class, 'checkout']);
 Route::get('/checkout', [OrderController::class, 'index']);
-Route::post('/checkout/bill', [OrderController::class, 'store']);
+Route::post('/checkout/order', [OrderController::class, 'store']);
 

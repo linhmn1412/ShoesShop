@@ -188,7 +188,8 @@ class MainController extends Controller
             $cart = array();
             session()->put('cart', $cart);
         }
-        $lenCart = count((session()->get(key:'cart')));
+        $cart = session()->get(key:'cart');
+        $lenCart = count($cart);
         $data = User::where('id_user', session('Login'))->first();
         $brands = Brand::all();
         $categories = Category::all();
@@ -200,6 +201,15 @@ class MainController extends Controller
         $countFB = array();
         $countFB['count_fb'] = DB::table('feedback')->where('id_shoe', $shoe['id_shoe'])->count();
         $countFB['avgRated'] = DB::table('feedback')->where('id_shoe', $shoe['id_shoe'])->avg('rated');
+
+        //all shoes purchased from 1 user
+        $allShoes_user = array();
+        $allShoes_user= DB::table('orders')
+        ->join('orderdetail', 'orders.id_order', '=', 'orderdetail.id_order')
+        ->join('shoes', 'orderdetail.id_shoe', '=', 'shoes.id_shoe')
+        ->where('orders.id_user', $data->id_user)
+        ->select('shoes.*')
+        ->get();
 
         //find similar shoes
         if (
@@ -214,8 +224,7 @@ class MainController extends Controller
                 ->where('id_shoe', '!=', $shoe->id_shoe)->get();
         }
         //product
-        $cart = session()->get(key:'cart');
-        if(!$cart){$cart = array();}
+        
 
         return view('index')->with('route', 'product')
             ->with('data', $data)
@@ -226,6 +235,7 @@ class MainController extends Controller
             ->with('discounts', $discounts)
             ->with('feedbacks', $feedbacks)
             ->with('countFB', $countFB)
+            ->with('allShoes_user',$allShoes_user)
             ->with('cart', $cart)
             ->with('similarShoes', $similarShoes);
     }
@@ -255,16 +265,17 @@ class MainController extends Controller
             $fb->save();
         } else {
             Feedback::create([
-                'id_shoe' => $id,
+                'id_shoe' => $request->input('id_shoe'),
                 'id_user' => $request->input('id_user'),
-                'username' => $request->input('user_name'),
+                'username' => $request->input('username'),
                 'rated' => $request->input('rated'),
                 'comment' => $request->input('comment'),
 
             ]);
+
         }
 
-        return Redirect('/shop/product=' . $id);
+        return redirect('/shop/product='.$id);
     }
 
     public function sale()

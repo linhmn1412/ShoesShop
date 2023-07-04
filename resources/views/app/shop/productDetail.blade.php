@@ -31,6 +31,11 @@
                 <div class="col-md position-relative">
                     <div class="card-body mt-5 py-5">
                         <div class="float-end ">
+
+
+                            <small class="text-muted float-end">({{ $countFB['count_fb'] }} Rated)</small>
+                            @if($countFB['count_fb'] !== 0)
+                            <div id="avgRated" class="float-end text-info"></div>
                             <script>
                                 $(function() {
                                     $("#avgRated").rateYo({
@@ -40,9 +45,7 @@
                                     })
                                 });
                             </script>
-
-                            <small class="text-muted float-end">({{ $countFB['count_fb'] }} Rated)</small>
-                            <div id="avgRated" class="float-end text-info"></div>
+                            @endif
                         </div>
 
                         <h3 class="card-title mb-3" style="color: #185137;">{{ $shoe['name_shoe'] }}</h3>
@@ -74,8 +77,7 @@
                             <small class="text-muted"></small>
                         </p>
                         <div class="d-grid gap-2 mb-3">
-                            <a href="/shop/product={{$shoe['id_shoe']}}/addToCart" class="btn btn-primary fs-6 d-flex justify-content-between align-items-center" type="button" 
-                            data-url="{{ route('addToCart', ['id' => $shoe['id_shoe']]) }}" style="background-color: #185137;">
+                            <a href="/shop/product={{$shoe['id_shoe']}}/addToCart" class="btn btn-primary fs-6 d-flex justify-content-between align-items-center" type="button" data-url="{{ route('addToCart', ['id' => $shoe['id_shoe']]) }}" style="background-color: #185137;">
                                 <span>Add To Cart</span>
                                 <i class="fas fa-arrow-right-long"></i>
                             </a>
@@ -184,7 +186,7 @@
                             <script>
                                 $(function() {
                                     $("#rateYo{{$feedback->id_feedback}}").rateYo({
-                                        rating:{{$feedback->rated}},
+                                        rating: {{$feedback->rated}},
                                         starWidth: "15px",
                                         readOnly: true
                                     });
@@ -200,9 +202,11 @@
                     <small class="text-dark px-2">No feedback!</small>
                     @endif
 
-                    {{--@if ($feedback->id_user == $data['id_user'])
+                    @foreach($allShoes_user as $item)
+                    @if($item->id_shoe == $shoe->id_shoe)
                     @php $check= 1; @endphp
-                    @endif--}}
+                    @endif
+                    @endforeach
 
                     <div class="pagination justify-content-end">
                         <center>{{ $feedbacks->links() }}</center>
@@ -210,35 +214,34 @@
                 </div>
                 @if ($check == 1)
                 <div class="col-md">
-                    <br>
-                    <h5 class="float-start">Review Product</h5>
 
-                    <div id="rateYo" class=" float-end text-info"></div><br><br>
-                    <script>
-                        $(function() {
-
-                            $("#rateYo").rateYo({
-                                starWidth: "30px",
-                                normalFill: "#A0A0A0"
-                            }).on("rateyo.set", function(e, data) {
-
-                                ('#rated').val(data.rating);
-                            });
-
-                        });
-                    </script>
                     <form action="/shop/product={{ $shoe['id_shoe'] }}/feedback" method="POST">
                         @csrf
-                        <input type="hidden" class="form-control" name="rated" id="rated" value="">
+                        <br>
+                        <h5 class="float-start">Review Product</h5>
+                        <div id="rateYo" class=" float-end text-info"></div><br><br>
+                        <input type="hidden" class="form-control" name="rated" id="rated" readonly>
+                        <script>
+                            $(function() {
+                                $("#rateYo").rateYo({
+                                    starWidth: "30px",
+                                    normalFill: "#A0A0A0",
+                                    onChange: function(rating, rateYoInstance) {
+                                        $("#rated").val(rating);
+                                    }
+                                });
+
+                            });
+                        </script>
                         <input type="hidden" class="form-control" name="id_user" value="{{ $data['id_user'] }}">
                         <input type="hidden" class="form-control" name="id_shoe" value="{{ $shoe['id_shoe'] }}">
 
                         <div class="form-outline mb-4">
-                            <input type="input" class="form-control" name="username" required value="{{ $data['username'] }}" />
+                            <input type="input" class="form-control" name="username" required value="{{ $data['username'] }}" readonly />
                             <label class="form-label">Name</label>
                         </div>
                         <div class="form-outline">
-                            <textarea class="form-control" name="comment" rows="4"></textarea>
+                            <textarea type="text" class="form-control" name="comment" rows="4"></textarea>
                             <label class="form-label">Comment</label>
                         </div>
                         <br>

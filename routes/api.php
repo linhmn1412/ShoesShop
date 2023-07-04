@@ -39,3 +39,6 @@ Route::get('/api-shop/brand={brand}', function($brand) {
 Route::post('/api-user/create', [ApiController:: class, 'store']);
 
 Route::post('/api-order/create', [ApiOrderController:: class, 'store']);
+
+//all products purchased from 1 user
+Route::get('/api-allProducts/user={id}', [ApiController:: class, 'allProducts_user']);
